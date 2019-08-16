@@ -1,0 +1,47 @@
+version: '3.0'
+services:
+  web:
+    build: 
+      context: .
+      dockerfile: './build_files/Dockerfile'
+    ports:
+       - "81:80"
+    volumes:
+       - "/Applications/XAMPP/xamppfiles/htdocs/scaffold_api:/var/www/html/scaffold_api"
+    networks:
+       - app-tier
+  mariadb:
+    build:
+      context: .
+      dockerfile: './build_files/mariaDB.dockerfile'
+    ports:
+       - "3307"
+    environment:
+       - MARIADB_ROOT_USER=root
+       - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+       - mariadb_data:/bitnami
+    networks:
+       - app-tier
+  phpmyadmin:
+    image: bitnami/phpmyadmin:latest
+    depends_on:
+       - mariadb
+    ports:
+       - '82:80'
+       - '444:443'
+    environment:
+       - DATABASE_HOST=mariadb
+       - DATABASE_PORT_NUMBER=3307
+    volumes:
+       - phpmyadmin_data:/bitnami
+    networks:
+       - app-tier
+volumes:
+  mariadb_data:
+    driver: local
+  phpmyadmin_data:
+    driver: local
+networks:
+  app-tier:
+    driver: bridge

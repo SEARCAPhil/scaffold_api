@@ -1,0 +1,16 @@
+language: php
+php:
+   - '7.1'
+   - '7.0'
+services:
+   - mysql
+dist: trusty
+sudo: required
+before_script:
+   - composer update
+   - mysql -u root -e "CREATE database homestead;"
+   - mv .env.example .env
+   - php artisan key:generate
+   - php artisan migrate:fresh -v --seed
+notifications:
+  webhooks: https://outlook.office.com/webhook/f2e23e55-b57d-48c0-9dfe-2fa37bc0410d@307a54f4-8cde-4681-93af-be6cebf30c26/TravisCI/033549a0e1ff41f589ebab25048e2db4/789c31c2-6879-4c34-b444-4a6bfad6490e
